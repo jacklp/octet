@@ -223,15 +223,23 @@ namespace octet {
 
     static unsigned translate(unsigned key) {
       switch (key) {
+
+		//change keys to wasd from arrows
+		case 65: return key_left;
+		case 68: return key_right;
+		case 87: return key_up;
+		
+		//case VK_LEFT: return key_left;
+		//case VK_UP: return key_up;
+		//case VK_RIGHT: return key_right;
+
         case VK_SHIFT: return key_shift;
         case VK_CONTROL: return key_ctrl;
         case VK_MENU: return key_alt;
 
         case VK_END: return key_end;
         case VK_HOME: return key_home;
-        case VK_LEFT: return key_left;
-        case VK_UP: return key_up;
-        case VK_RIGHT: return key_right;
+        
         case VK_DOWN: return key_down;
         case VK_INSERT: return key_insert;
         case VK_DELETE: return key_delete;

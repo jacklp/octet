@@ -206,6 +206,9 @@ namespace octet {
     // information for our text
     bitmap_font font;
 
+	//last direction travelled by player
+	string lastDirection;
+
     ALuint get_sound_source() { return sources[cur_source++ % num_sound_sources]; }
 
     // called when we hit an enemy
@@ -236,16 +239,41 @@ namespace octet {
       }
     }
 
+	void dodge() {
+
+		const float ship_speed = 0.05f;
+
+		if (is_key_going_down(' ')) {
+
+			if (lastDirection == "left") {
+				sprites[ship_sprite].translate(-ship_speed * 15, 0);
+				if (sprites[ship_sprite].collides_with(sprites[first_border_sprite + 2])) {
+					sprites[ship_sprite].translate(+ship_speed, 0);
+				}
+			}
+			else if (lastDirection == "right") {
+				sprites[ship_sprite].translate(+ship_speed * 15, 0);
+				if (sprites[ship_sprite].collides_with(sprites[first_border_sprite + 3])) {
+					sprites[ship_sprite].translate(-ship_speed, 0);
+				}
+			}
+
+		}
+	}
+
+
     // use the keyboard to move the ship
     void move_ship() {
       const float ship_speed = 0.05f;
       // left and right arrows
       if (is_key_down(key_left)) {
+		  lastDirection = "left";
         sprites[ship_sprite].translate(-ship_speed, 0);
         if (sprites[ship_sprite].collides_with(sprites[first_border_sprite+2])) {
           sprites[ship_sprite].translate(+ship_speed, 0);
         }
       } else if (is_key_down(key_right)) {
+		  lastDirection = "right";
         sprites[ship_sprite].translate(+ship_speed, 0);
         if (sprites[ship_sprite].collides_with(sprites[first_border_sprite+3])) {
           sprites[ship_sprite].translate(-ship_speed, 0);
@@ -257,7 +285,8 @@ namespace octet {
     void fire_missiles() {
       if (missiles_disabled) {
         --missiles_disabled;
-      } else if (is_key_going_down(' ')) {
+	  } else if (is_key_down(key_up)) {
+
         // find a missile
         for (int i = 0; i != num_missiles; ++i) {
           if (!sprites[first_missile_sprite+i].is_enabled()) {
@@ -484,6 +513,8 @@ namespace octet {
       if (game_over) {
         return;
       }
+
+	  dodge();
 
       move_ship();
 
