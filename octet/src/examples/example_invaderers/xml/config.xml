@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<textures>
+	<texture>assets/big_0.gif</texture>
+	<texture>assets/invaderers/ship.gif</texture>
+  	<texture>assets/invaderers/GameOver.gif</texture>
+  	<texture>assets/invaderers/invaderer.gif</texture>
+</textures>

@@ -1,12 +1,3 @@
-////////////////////////////////////////////////////////////////////////////////
-//
-// (C) Andy Thomason 2012-2014
-//
-// Modular Framework for OpenGLES2 rendering on multiple platforms.
-//
-// Invaderers - will space be free of 'em?
-//
-
 #include "../../octet.h"
 
 #include "invaderers_app.h"

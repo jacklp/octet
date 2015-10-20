@@ -17,7 +17,7 @@ namespace octet { namespace scene {
       set_params(32, 0, 0, GL_POINTS, 0);
       update();
     }
-
+		
   public:
     RESOURCE_META(mesh_points)
 
