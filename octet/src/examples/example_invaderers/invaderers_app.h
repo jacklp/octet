@@ -10,7 +10,6 @@ namespace octet {
 
 		// shader to draw a textured triangle
 		texture_shader texture_shader_;
-		background_shader background_shader_;
 
 		enum {
 			num_sound_sources = 8,
@@ -59,6 +58,7 @@ namespace octet {
 		// sounds
 		ALuint whoosh;
 		ALuint bang;
+		ALuint death;
 		unsigned cur_source;
 		ALuint sources[num_sound_sources];
 
@@ -103,6 +103,9 @@ namespace octet {
 			alSourcePlay(source);
 
 			if (--num_lives == 0) {
+				ALuint source = get_sound_source();
+				alSourcei(source, AL_BUFFER, death);
+				alSourcePlay(source);
 				game_over = true;
 				sprites[game_over_sprite].translate(-20, 0);
 			}
@@ -356,10 +359,10 @@ namespace octet {
 		// this is called once OpenGL is initialized
 		void app_init() {
 
-			// 1. Example to show I can load in a config file via XML.
+			// Load in a config file via XML.
 			std::vector<string> textures = get_textures();	
 
-			// 2. Example to show how I can iterate through a vector using iterators:
+			// Iterate through a vector using iterators:
 			std::vector<string>::iterator it = textures.begin();
 
 			// set up the shader
@@ -414,6 +417,7 @@ namespace octet {
 			// sounds
 			whoosh = resource_dict::get_sound_handle(AL_FORMAT_MONO16, "assets/invaderers/whoosh.wav");
 			bang = resource_dict::get_sound_handle(AL_FORMAT_MONO16, "assets/invaderers/bang.wav");
+			death = resource_dict::get_sound_handle(AL_FORMAT_MONO16, "assets/invaderers/tinkle.wav");
 			cur_source = 0;
 			alGenSources(num_sound_sources, sources);
 
@@ -462,7 +466,7 @@ namespace octet {
 			glViewport(x, y, w, h);
 
 			// clear the background to black
-			glClearColor(0, 0, 0, 1);
+			glClearColor(1, 1, 1, 1);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			// don't allow Z buffer depth testing (closer objects are always drawn in front of far ones)
