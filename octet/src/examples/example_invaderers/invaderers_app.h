@@ -311,7 +311,7 @@ namespace octet {
 			glDrawElements(GL_TRIANGLES, num_quads * 6, GL_UNSIGNED_INT, indices);
 		}
 
-		TiXmlDocument load() {
+		TiXmlDocument load_xml() {
 			TiXmlDocument doc("xml/config.xml");
 			GLboolean loadOkay = doc.LoadFile();
 
@@ -324,29 +324,40 @@ namespace octet {
 
 		}
 
-		std::vector<string> get_textures() {
+		void load_assets_via_xml(std::vector<string>& textures_vector, std::vector<string>& sounds_vector) {
 
 			
-			TiXmlDocument doc = load();
-			TiXmlElement *texture, *textures;
-			std::vector<string> arr;
-			GLuint count = 0;
+			TiXmlDocument doc = load_xml();
+			TiXmlElement *texture, *textures, *assets, *sounds, *sound;
+			std::vector<string> config_vec;
 
-			textures = doc.FirstChildElement("textures");
+			assets = doc.FirstChildElement("assets");
 
-			if (textures)
+			if (assets)
 			{
-				texture = textures->FirstChildElement("texture");
+				textures = assets->FirstChildElement("textures");
+				if (textures) {
+					texture = textures->FirstChildElement("texture");
 
-				while (texture)
-				{
-					count++;
-					arr.push_back(texture->GetText());
-					texture = texture->NextSiblingElement("texture");
+					while (texture)
+					{
+						textures_vector.push_back(texture->GetText());
+						texture = texture->NextSiblingElement("texture");
+					}
+				}
+				
+				sounds = assets->FirstChildElement("sounds");
+				if (sounds) {
+					sound = sounds->FirstChildElement("sound");
+
+					while (sound)
+					{
+						sounds_vector.push_back(sound->GetText());
+						sound = sound->NextSiblingElement("sound");
+					}
 				}
 			}
 
-			return arr;
 		}
 
 	public:
@@ -359,11 +370,16 @@ namespace octet {
 		// this is called once OpenGL is initialized
 		void app_init() {
 
+			std::vector<string> textures;
+			std::vector<string> sounds;
+
 			// Load in a config file via XML.
-			std::vector<string> textures = get_textures();	
+			load_assets_via_xml(textures, sounds);	
 
 			// Iterate through a vector using iterators:
-			std::vector<string>::iterator it = textures.begin();
+			std::vector<string>::iterator textures_it = textures.begin();
+			std::vector<string>::iterator sounds_it = sounds.begin();
+
 
 			// set up the shader
 			texture_shader_.init();
@@ -372,16 +388,15 @@ namespace octet {
 			cameraToWorld.loadIdentity();
 			cameraToWorld.translate(0, 0, 3);
 
-			font_texture = resource_dict::get_texture_handle(GL_RGBA, it[0]);
+			font_texture = resource_dict::get_texture_handle(GL_RGBA, textures_it[0]);
 
-
-			GLuint ship = resource_dict::get_texture_handle(GL_RGBA, it[1]);
+			GLuint ship = resource_dict::get_texture_handle(GL_RGBA, textures_it[1]);
 			sprites[ship_sprite].init(ship, 0, -2.75f, 0.25f, 0.25f);
 
-			GLuint GameOver = resource_dict::get_texture_handle(GL_RGBA, it[2]);
+			GLuint GameOver = resource_dict::get_texture_handle(GL_RGBA, textures_it[2]);
 			sprites[game_over_sprite].init(GameOver, 20, 0, 3, 1.5f);
 
-			GLuint invaderer = resource_dict::get_texture_handle(GL_RGBA, it[3]);
+			GLuint invaderer = resource_dict::get_texture_handle(GL_RGBA, textures_it[3]);
 			for (int j = 0; j != num_rows; ++j) {
 				for (int i = 0; i != num_cols; ++i) {
 					assert(first_invaderer_sprite + i + j*num_cols <= last_invaderer_sprite);
@@ -392,14 +407,14 @@ namespace octet {
 			}
 
 			// set the border to white for clarity
-			GLuint white = resource_dict::get_texture_handle(GL_RGB, "#ffffff");
+			GLuint white = resource_dict::get_texture_handle(GL_RGB, textures_it[4]);
 			sprites[first_border_sprite + 0].init(white, 0, -3, 6, 0.2f);
 			sprites[first_border_sprite + 1].init(white, 0, 3, 6, 0.2f);
 			sprites[first_border_sprite + 2].init(white, -3, 0, 0.2f, 6);
 			sprites[first_border_sprite + 3].init(white, 3, 0, 0.2f, 6);
 
 			// use the missile texture
-			GLuint missile = resource_dict::get_texture_handle(GL_RGBA, "assets/invaderers/missile.gif");
+			GLuint missile = resource_dict::get_texture_handle(GL_RGBA, textures_it[5]);
 			for (int i = 0; i != num_missiles; ++i) {
 				// create missiles off-screen
 				sprites[first_missile_sprite + i].init(missile, 20, 0, 0.0625f, 0.25f);
@@ -407,7 +422,7 @@ namespace octet {
 			}
 
 			// use the bomb texture
-			GLuint bomb = resource_dict::get_texture_handle(GL_RGBA, "assets/invaderers/bomb.gif");
+			GLuint bomb = resource_dict::get_texture_handle(GL_RGBA, textures_it[6]);
 			for (int i = 0; i != num_bombs; ++i) {
 				// create bombs off-screen
 				sprites[first_bomb_sprite + i].init(bomb, 20, 0, 0.0625f, 0.25f);
@@ -415,9 +430,9 @@ namespace octet {
 			}
 
 			// sounds
-			whoosh = resource_dict::get_sound_handle(AL_FORMAT_MONO16, "assets/invaderers/whoosh.wav");
-			bang = resource_dict::get_sound_handle(AL_FORMAT_MONO16, "assets/invaderers/bang.wav");
-			death = resource_dict::get_sound_handle(AL_FORMAT_MONO16, "assets/invaderers/tinkle.wav");
+			whoosh = resource_dict::get_sound_handle(AL_FORMAT_MONO16, sounds_it[0]);
+			bang = resource_dict::get_sound_handle(AL_FORMAT_MONO16, sounds_it[1]);
+			death = resource_dict::get_sound_handle(AL_FORMAT_MONO16, sounds_it[2]);
 			cur_source = 0;
 			alGenSources(num_sound_sources, sources);
 

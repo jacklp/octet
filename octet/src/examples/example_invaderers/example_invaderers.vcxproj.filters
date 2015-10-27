@@ -13,4 +13,7 @@
   <ItemGroup>
     <Text Include="README.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="xml\config.xml" />
+  </ItemGroup>
 </Project>
