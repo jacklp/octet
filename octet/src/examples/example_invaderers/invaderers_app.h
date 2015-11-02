@@ -4,11 +4,8 @@
 namespace octet {
 
 	class invaderers_app : public octet::app {
-		// Matrix to transform points in our camera space to the world.
-		// This lets us move our camera
-		mat4t cameraToWorld;
 
-		// shader to draw a textured triangle
+		mat4t cameraToWorld;
 		texture_shader texture_shader_;
 
 		enum {
@@ -277,7 +274,6 @@ namespace octet {
 			return false;
 		}
 
-
 		void draw_text(texture_shader &shader, float x, float y, float scale, const char *text) {
 			mat4t modelToWorld;
 			modelToWorld.loadIdentity();
@@ -311,6 +307,11 @@ namespace octet {
 			glDrawElements(GL_TRIANGLES, num_quads * 6, GL_UNSIGNED_INT, indices);
 		}
 
+		/*
+		Function to load the XML document object
+		
+		@return void
+		*/
 		TiXmlDocument load_xml() {
 			TiXmlDocument doc("xml/config.xml");
 			GLboolean loadOkay = doc.LoadFile();
@@ -324,6 +325,12 @@ namespace octet {
 
 		}
 
+		/*
+		Function to parse the XML document object
+
+		@param vector<string> textures_vector - Holds a reference to all the textures
+		@param vector<string> sounds_vector - Holds a reference to all the sounds
+		*/
 		void load_assets_via_xml(std::vector<string>& textures_vector, std::vector<string>& sounds_vector) {
 
 			
@@ -366,10 +373,10 @@ namespace octet {
 		invaderers_app(int argc, char **argv) : app(argc, argv), font(512, 256, "assets/big.fnt") {
 		}
 
-
 		// this is called once OpenGL is initialized
 		void app_init() {
 
+			//texture and sounds vectors
 			std::vector<string> textures;
 			std::vector<string> sounds;
 
@@ -380,9 +387,9 @@ namespace octet {
 			std::vector<string>::iterator textures_it = textures.begin();
 			std::vector<string>::iterator sounds_it = sounds.begin();
 
-
 			// set up the shader
 			texture_shader_.init();
+
 
 			// set up the matrices with a camera 5 units from the origin
 			cameraToWorld.loadIdentity();
@@ -428,6 +435,13 @@ namespace octet {
 				sprites[first_bomb_sprite + i].init(bomb, 20, 0, 0.0625f, 0.25f);
 				sprites[first_bomb_sprite + i].is_enabled() = false;
 			}
+
+			//load bricks
+			/*GLuint brick = resource_dict::get_texture_handle(GL_RGBA, textures_it[7]);
+			for (int i = 0; i != num_bricks; i++) {
+				sprites[first_brick_sprite + i].init(brick, ((float)i - num_bricks * 0.5f) * 0.5f, -2.0f, 0.25f, 0.15f);
+				sprites[first_brick_sprite + i].is_enabled() = true;
+			}*/
 
 			// sounds
 			whoosh = resource_dict::get_sound_handle(AL_FORMAT_MONO16, sounds_it[0]);
@@ -499,6 +513,8 @@ namespace octet {
 			char score_text[32];
 			sprintf(score_text, "score: %d   lives: %d\n", score, num_lives);
 			draw_text(texture_shader_, -1.75f, 2, 1.0f / 256, score_text);
+
+			GLuint brick = resource_dict::get_texture_handle(GL_RGBA, "assets/invaderers/brick.gif");
 
 			// move the listener with the camera
 			vec4 &cpos = cameraToWorld.w();
