@@ -228,6 +228,7 @@ namespace octet {
 		case 65: return key_left;
 		case 68: return key_right;
 		case 87: return key_up;
+		case 83: return key_down;
 		
 		//case VK_LEFT: return key_left;
 		//case VK_UP: return key_up;

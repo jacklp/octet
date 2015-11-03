@@ -107,11 +107,13 @@ namespace octet {
 				;
 		}
 
-		bool is_above(const sprite &rhs, float margin) const {
-			float dx = rhs.modelToWorld[3][0] - modelToWorld[3][0];
-
+		bool is_adjacent(const sprite &rhs, float margin) const {
+			
+			//rhs.modeltoworld = player
+			//modeltoworld = enemy
+			float dx = rhs.modelToWorld[3][1] - modelToWorld[3][1];
 			return
-				(fabsf(dx) < halfWidth + margin)
+				(fabsf(dx) < halfHeight + margin)
 				;
 		}
 

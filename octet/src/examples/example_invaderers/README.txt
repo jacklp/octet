@@ -4,6 +4,15 @@ Modifications:
 2. Create an iterator for our vector<string> textures and use this to plug in the correct attributes to application (this could be made more dynamic).
 3. Modify the input keys from arrow keys to wasd.
 4. Add an additional move for the spaceship - hit space to jump in your currently moving direction.
-5. modify the texture_shader to invert the colours of all the textures.
+5. "invert_color" function to modify the texture_shader to invert the colours of all the textures.
 6. change the background colour to white.
 7. Added tinkle.wav sound to be played upon death.
+8. Created new shader - alternative_shader
+9. Draw_text now uses custom shader with "make_red" function.
+10. added new graphics: castle.gif, enemy.gif, pong_bar.gif
+11. redrew the borders to make the game horizontal and smaller.
+12. reconfigured start position for player and castle to the left side of the screen.
+13. reconfigured the enemys to start offscreen to the right and in randomly generated y positions in pairs.
+14. changed the is_above method on sprite to is_adjacent and now checks for horizontal position in the modeltoworld vector
+15. the bullets now move horizontally and check for collision against the left wall.
+16. key_down was added to windows_specific and the key bindings changed to move the player up and down.

@@ -2,12 +2,13 @@
 <assets>
   <textures>
     <texture>assets/big_0.gif</texture>
-    <texture>assets/invaderers/ship.gif</texture>
+    <texture>assets/invaderers/pong_bar.gif</texture>
     <texture>assets/invaderers/GameOver.gif</texture>
-    <texture>assets/invaderers/invaderer.gif</texture>
+    <texture>assets/invaderers/enemy.gif</texture>
     <texture>#ffffff</texture>
     <texture>assets/invaderers/missile.gif</texture>
     <texture>assets/invaderers/bomb.gif</texture>
+    <texture>assets/invaderers/castle.gif</texture>
   </textures>
   <sounds>
     <sound>assets/invaderers/whoosh.wav</sound>

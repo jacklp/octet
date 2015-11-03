@@ -26,7 +26,9 @@
 #define OCTET_SHADERS_INCLUDED
 
   // shaders
+  
   #include "../shaders/shader.h"
+  #include "../shaders/alternative_shader.h"
   #include "../shaders/color_shader.h"
   #include "../shaders/texture_shader.h"
   #include "../shaders/phong_shader.h"
