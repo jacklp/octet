@@ -1,4 +1,4 @@
-Modifications:
+patch notes:
 
 1. Load in a config via XML using the TinyXML parser library.
 2. Create an iterator for our vector<string> textures and use this to plug in the correct attributes to application (this could be made more dynamic).
@@ -16,3 +16,8 @@ Modifications:
 14. changed the is_above method on sprite to is_adjacent and now checks for horizontal position in the modeltoworld vector
 15. the bullets now move horizontally and check for collision against the left wall.
 16. key_down was added to windows_specific and the key bindings changed to move the player up and down.
+17. rotated bomb.gif
+18. changed the scoring system to deduct lives if the bombs hit the castle.
+19. removed missile functionality.
+20. added bounce back functionality to the player so that the bombs travel in the opposite direction if they collide with the player.
+21. added collision detection functionality so that if the bombs bounce back and hit an enemy it kills the enemy.

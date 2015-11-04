@@ -16,12 +16,13 @@ namespace octet {
 			num_rows = 5,
 			num_cols = 10,
 			num_missiles = 2,
-			num_bombs = 2,
+			num_bombs = 3,
 			num_borders = 4,
 			num_enemys = num_rows * num_cols,
 
 			// sprite definitions
 			player_sprite = 0,
+			castle_sprite,
 			game_over_sprite,
 
 			first_enemy_sprite,
@@ -79,38 +80,6 @@ namespace octet {
 
 		ALuint get_sound_source() { return sources[cur_source++ % num_sound_sources]; }
 
-		// called when we hit an enemy
-		void on_hit_enemy() {
-			ALuint source = get_sound_source();
-			alSourcei(source, AL_BUFFER, bang);
-			alSourcePlay(source);
-
-			live_enemys--;
-			score++;
-			if (live_enemys == 4) {
-				invader_velocity *= 4;
-			}
-			else if (live_enemys == 0) {
-				game_over = true;
-				sprites[game_over_sprite].translate(-20, 0);
-			}
-		}
-
-		// called when we are hit
-		void on_hit_player() {
-			ALuint source = get_sound_source();
-			alSourcei(source, AL_BUFFER, bang);
-			alSourcePlay(source);
-
-			if (--num_lives == 0) {
-				ALuint source = get_sound_source();
-				alSourcei(source, AL_BUFFER, death);
-				alSourcePlay(source);
-				game_over = true;
-				sprites[game_over_sprite].translate(-20, 0);
-			}
-		}
-
 		void dodge() {
 
 			const float player_speed = 0.05f;
@@ -153,56 +122,22 @@ namespace octet {
 			}
 		}
 
-		// fire button (space)
-		/*void fire_missiles() {
-			if (missiles_disabled) {
-				--missiles_disabled;
-			}
-			else if (is_key_down(key_up)) {
+		// called when we hit an enemy
+		void on_hit_enemy() {
+			ALuint source = get_sound_source();
+			alSourcei(source, AL_BUFFER, bang);
+			alSourcePlay(source);
 
-				// find a missile
-				for (int i = 0; i != num_missiles; ++i) {
-					if (!sprites[first_missile_sprite + i].is_enabled()) {
-						sprites[first_missile_sprite + i].set_relative(sprites[player_sprite], 0, 0.5f);
-						sprites[first_missile_sprite + i].is_enabled() = true;
-						missiles_disabled = 5;
-						ALuint source = get_sound_source();
-						alSourcei(source, AL_BUFFER, whoosh);
-						alSourcePlay(source);
-						break;
-					}
-				}
+			live_enemys--;
+			score++;
+			if (live_enemys == 4) {
+				invader_velocity *= 4;
 			}
-		}*/
-
-		// pick and invader and fire a bomb
-		/*void fire_bombs() {
-			if (bombs_disabled) {
-				--bombs_disabled;
+			else if (live_enemys == 0) {
+				game_over = true;
+				sprites[game_over_sprite].translate(-20, 0);
 			}
-			else {
-				// find an enemy
-				sprite &player = sprites[player_sprite];
-				for (int j = randomizer.get(0, num_enemys); j < num_enemys; ++j) {
-					sprite &enemy = sprites[first_enemy_sprite + j];
-					if (enemy.is_enabled() && enemy.is_adjacent(player, 0.3f)) {
-						// find a bomb
-						for (int i = 0; i != num_bombs; ++i) {
-							if (!sprites[first_bomb_sprite + i].is_enabled()) {
-								sprites[first_bomb_sprite + i].set_relative(enemy, -0.25f, 0);
-								sprites[first_bomb_sprite + i].is_enabled() = true;
-								bombs_disabled = 30;
-								ALuint source = get_sound_source();
-								alSourcei(source, AL_BUFFER, whoosh);
-								alSourcePlay(source);
-								return;
-							}
-						}
-						return;
-					}
-				}
-			}
-		}*/
+		}
 
 		void fire_bombs() {
 			if (bombs_disabled) {
@@ -210,16 +145,19 @@ namespace octet {
 			}
 			else {
 				// find an invaderer
+				sprite &castle = sprites[castle_sprite];
 				sprite &player = sprites[player_sprite];
+
 				for (int j = randomizer.get(0, num_enemys); j < num_enemys; ++j) {
 					sprite &enemy = sprites[first_enemy_sprite + j];
-					if (enemy.is_enabled() && enemy.is_adjacent(player, 0.3f)) {
+					if (enemy.is_enabled() && enemy.is_adjacent(castle, 0.3f) && enemy.is_onscreen()) {
 						// find a bomb
 						for (int i = 0; i != num_bombs; ++i) {
 							if (!sprites[first_bomb_sprite + i].is_enabled()) {
+								sprites[first_bomb_sprite + i].direction = "left";
 								sprites[first_bomb_sprite + i].set_relative(enemy, -0.25f, 0);
 								sprites[first_bomb_sprite + i].is_enabled() = true;
-								bombs_disabled = 30;
+								bombs_disabled = 15;
 								ALuint source = get_sound_source();
 								alSourcei(source, AL_BUFFER, whoosh);
 								alSourcePlay(source);
@@ -232,21 +170,48 @@ namespace octet {
 			}
 		}
 
-
 		void move_bombs() {
 			const float bomb_speed = 0.2f;
 			for (int i = 0; i != num_bombs; ++i) {
 				sprite &bomb = sprites[first_bomb_sprite + i];
 				if (bomb.is_enabled()) {
-					bomb.translate(-bomb_speed, 0);
-					if (bomb.collides_with(sprites[player_sprite])) {
-						bomb.is_enabled() = false;
-						bomb.translate(20, 0);
-						bombs_disabled = 50;
-						on_hit_player();
-						goto next_bomb;
+					
+					if (bomb.direction == "left") {
+						bomb.translate(-bomb_speed, 0);
+						
+						if (bomb.collides_with(sprites[player_sprite])) {
+							bombs_disabled = 15;
+							bomb.direction = "right";
+							goto next_bomb;
+						}
+
+						if (bomb.collides_with(sprites[castle_sprite])) {
+							bomb.is_enabled() = false;
+							bomb.translate(20, 0);
+							bombs_disabled = 50;
+							on_hit_castle();
+							goto next_bomb;
+						}
 					}
-					if (bomb.collides_with(sprites[first_border_sprite + 2])) {
+					else if(bomb.direction == "right") {
+
+						bomb.translate(bomb_speed, 0);
+
+						for (int j = 0; j != num_enemys; ++j) {
+							sprite &enemy = sprites[first_enemy_sprite + j];
+							if (enemy.is_enabled() && bomb.collides_with(enemy)) {
+								enemy.is_enabled() = false;
+								enemy.translate(20, 0);
+								bomb.is_enabled() = false;
+								bomb.translate(20, 0);
+								on_hit_enemy();
+
+								goto next_bomb;
+							}
+						}
+					}
+					
+					if (bomb.collides_with(sprites[first_border_sprite + 2]) || bomb.collides_with(sprites[first_border_sprite + 3])) {
 						bomb.is_enabled() = false;
 						bomb.translate(20, 0);
 					}
@@ -255,59 +220,19 @@ namespace octet {
 			}
 		}
 
+		void on_hit_castle() {
+			ALuint source = get_sound_source();
+			alSourcei(source, AL_BUFFER, bang);
+			alSourcePlay(source);
 
-		// animate the bombs
-		/*void move_bombs() {
-			const float bomb_speed = 0.2f;
-			for (int i = 0; i != num_bombs; ++i) {
-				sprite &bomb = sprites[first_bomb_sprite + i];
-				if (bomb.is_enabled()) {
-					bomb.translate(0, -bomb_speed);
-					if (bomb.collides_with(sprites[player_sprite])) {
-						bomb.is_enabled() = false;
-						bomb.translate(0, 20);
-						bombs_disabled = 50;
-						on_hit_player();
-						goto next_bomb;
-					}
-					if (bomb.collides_with(sprites[first_border_sprite + 0])) {
-						bomb.is_enabled() = false;
-						bomb.translate(20, 0);
-					}
-				}
-			next_bomb:;
+			if (--num_lives == 0) {
+				ALuint source = get_sound_source();
+				alSourcei(source, AL_BUFFER, death);
+				alSourcePlay(source);
+				game_over = true;
+				sprites[game_over_sprite].translate(-20, 0);
 			}
-		}*/
-
-		// animate the missiles
-		/*void move_missiles() {
-			const float missile_speed = 0.3f;
-			for (int i = 0; i != num_missiles; ++i) {
-				sprite &missile = sprites[first_missile_sprite + i];
-				if (missile.is_enabled()) {
-					missile.translate(0, missile_speed);
-					for (int j = 0; j != num_enemys; ++j) {
-						sprite &enemy = sprites[first_enemy_sprite + j];
-						if (enemy.is_enabled() && missile.collides_with(enemy)) {
-							enemy.is_enabled() = false;
-							enemy.translate(20, 0);
-							missile.is_enabled() = false;
-							missile.translate(20, 0);
-							on_hit_enemy();
-
-							goto next_missile;
-						}
-					}
-					if (missile.collides_with(sprites[first_border_sprite + 1])) {
-						missile.is_enabled() = false;
-						missile.translate(20, 0);
-					}
-				}
-			next_missile:;
-			}
-		}*/
-
-		
+		}
 
 		// move the array of enemies
 		void move_enemys(float dx, float dy) {
@@ -464,7 +389,7 @@ namespace octet {
 			GLuint enemy = resource_dict::get_texture_handle(GL_RGBA, textures_it[3]);
 			for (int i = 0; i != num_enemys; ++i) {
 				float r3 = -1 + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (1 - -1)));
-				sprites[first_enemy_sprite + i].init(enemy, 3.0f + (i/2), 1, 0.25f, 0.25f);
+				sprites[first_enemy_sprite + i].init(enemy, 3.0f + (i/2), r3, 0.25f, 0.25f);
 			}
 
 			// set the border to white for clarity
@@ -486,14 +411,14 @@ namespace octet {
 			GLuint bomb = resource_dict::get_texture_handle(GL_RGBA, textures_it[6]);
 			for (int i = 0; i != num_bombs; ++i) {
 				// create bombs off-screen
-				sprites[first_bomb_sprite + i].init(bomb, 20, 0, 0.0625f, 0.25f);
+				sprites[first_bomb_sprite + i].init(bomb, 20, 0, 0.25f, 0.0625f);
 				sprites[first_bomb_sprite + i].is_enabled() = false;
 			}
 
 			//load fortress
 			GLuint castle = resource_dict::get_texture_handle(GL_RGBA, textures_it[7]);
-			sprites[castle].init(castle, -2.50f, 0, 2, 2);
-			sprites[castle].is_enabled() = false;
+			sprites[castle_sprite].init(castle, -2.50f, 0, 2, 2);
+			sprites[castle_sprite].is_enabled() = false;
 
 			// sounds
 			whoosh = resource_dict::get_sound_handle(AL_FORMAT_MONO16, sounds_it[0]);

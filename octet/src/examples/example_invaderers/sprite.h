@@ -17,7 +17,11 @@ namespace octet {
 
 		// true if this sprite is enabled.
 		bool enabled;
+
 	public:
+		
+		string direction = "left";
+
 		sprite() {
 			texture = 0;
 			enabled = true;
@@ -117,9 +121,18 @@ namespace octet {
 				;
 		}
 
+		bool is_past_stopping_point() {
+			return modelToWorld[3][0] < 0;
+		}
+
+		bool is_onscreen() {	
+			return modelToWorld[3][0] < 3;
+		}
+
 		bool &is_enabled() {
 			return enabled;
 		}
+
 	};
 
 
