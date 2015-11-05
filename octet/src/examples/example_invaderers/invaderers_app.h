@@ -144,8 +144,7 @@ namespace octet {
 					//loop through the available bombs
 					for (int i = 0; i != num_bombs; ++i) {
 
-						int j = randomizer.get(0, available_enemys.size());
-
+						int j = randomizer.get(0, available_enemys.size());						
 						sprite &enemy = available_enemys_iterator[j];
 
 						if (!sprites[first_bomb_sprite + i].is_enabled()) {
@@ -170,7 +169,9 @@ namespace octet {
 				sprite &bomb = sprites[first_bomb_sprite + i];
 				if (bomb.is_enabled()) {
 					
+					
 					if (bomb.direction == "left") {
+
 						bomb.translate(-bomb_speed, 0);
 						
 						if (bomb.collides_with(sprites[player_sprite])) {
@@ -232,21 +233,10 @@ namespace octet {
 		void move_enemys(float dx, float dy) {
 			for (int j = 0; j != num_enemys; ++j) {
 				sprite &enemy = sprites[first_enemy_sprite + j];
-				if (enemy.is_enabled()) {
+				if (enemy.is_enabled() && enemy.is_not_past_stopping_point((float)j/20) ) {
 					enemy.translate(dx, dy);
 				}
 			}
-		}
-
-		// check if any invaders hit the sides.
-		bool enemys_collide(sprite &border) {
-			for (int j = 0; j != num_enemys; ++j) {
-				sprite &enemy = sprites[first_enemy_sprite + j];
-				if (enemy.is_enabled() && enemy.collides_with(border)) {
-					return true;
-				}
-			}
-			return false;
 		}
 
 		void draw_text(alternative_shader &shader, float x, float y, float scale, const char *text) {
@@ -443,16 +433,8 @@ namespace octet {
 
 			move_bombs();
 
-			//fire_missiles();
-			//move_missiles();
-
-			move_enemys(invader_velocity, 0);
-
-			sprite &border = sprites[first_border_sprite + (invader_velocity < 0 ? 2 : 3)];
-			if (enemys_collide(border)) {
-				invader_velocity = -invader_velocity;
-				move_enemys(invader_velocity, -0.1f);
-			}
+			move_enemys(-invader_velocity, 0);
+			
 		}
 
 		// this is called to draw the world

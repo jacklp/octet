@@ -121,8 +121,8 @@ namespace octet {
 				;
 		}
 
-		bool is_past_stopping_point() {
-			return modelToWorld[3][0] < 0;
+		bool is_not_past_stopping_point(float variable_distance) {
+			return modelToWorld[3][0] > ( 1.5 + variable_distance);
 		}
 
 		bool is_onscreen() {	

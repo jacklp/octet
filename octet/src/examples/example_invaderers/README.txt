@@ -23,3 +23,4 @@ patch notes:
 21. added collision detection functionality so that if the bombs bounce back and hit an enemy it kills the enemy.
 22. completely changed fire bombs functionality so that bombs are only fired by on_screen enemys that are stored in a temporary vector
 23. player movement speed increased. Removed the dodge functionality as it is now defunct.
+24. enemy pathing solved.
