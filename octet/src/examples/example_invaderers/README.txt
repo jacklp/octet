@@ -7,7 +7,7 @@ patch notes:
 5. "invert_color" function to modify the texture_shader to invert the colours of all the textures.
 6. change the background colour to white.
 7. Added tinkle.wav sound to be played upon death.
-8. Created new shader - alternative_shader
+8. Created new shader - alternative_shader.
 9. Draw_text now uses custom shader with "make_red" function.
 10. added new graphics: castle.gif, enemy.gif, pong_bar.gif
 11. redrew the borders to make the game horizontal and smaller.
@@ -24,3 +24,4 @@ patch notes:
 22. completely changed fire bombs functionality so that bombs are only fired by on_screen enemys that are stored in a temporary vector
 23. player movement speed increased. Removed the dodge functionality as it is now defunct.
 24. enemy pathing solved.
+25. changed player graphic to a medieval shield

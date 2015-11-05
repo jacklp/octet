@@ -2,7 +2,7 @@
 <assets>
   <textures>
     <texture>assets/big_0.gif</texture>
-    <texture>assets/invaderers/pong_bar.gif</texture>
+    <texture>assets/invaderers/medievalshield.gif</texture>
     <texture>assets/invaderers/GameOver.gif</texture>
     <texture>assets/invaderers/enemy.gif</texture>
     <texture>#ffffff</texture>

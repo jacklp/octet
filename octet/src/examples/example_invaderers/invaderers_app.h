@@ -365,7 +365,7 @@ namespace octet {
 			font_texture = resource_dict::get_texture_handle(GL_RGBA, textures_it[0]);
 
 			GLuint player = resource_dict::get_texture_handle(GL_RGBA, textures_it[1]);
-			sprites[player_sprite].init(player, -1.25f, 0, 0.05f, 0.5f);
+			sprites[player_sprite].init(player, -1.25f, 0, 0.25f, 0.5f);
 
 			GLuint GameOver = resource_dict::get_texture_handle(GL_RGBA, textures_it[2]);
 			sprites[game_over_sprite].init(GameOver, 20, 0, 3, 1.5f);
