@@ -13,12 +13,11 @@ namespace octet {
 
 		enum {
 			num_sound_sources = 8,
-			num_rows = 5,
-			num_cols = 10,
+
 			num_missiles = 2,
-			num_bombs = 3,
+			num_bombs = 1,
 			num_borders = 4,
-			num_enemys = num_rows * num_cols,
+			num_enemys = 20,
 
 			// sprite definitions
 			player_sprite = 0,
@@ -80,31 +79,10 @@ namespace octet {
 
 		ALuint get_sound_source() { return sources[cur_source++ % num_sound_sources]; }
 
-		void dodge() {
-
-			const float player_speed = 0.05f;
-
-			if (is_key_going_down(' ')) {
-
-				if (lastDirection == "up") {
-					sprites[player_sprite].translate(0, -player_speed * 15);
-					if (sprites[player_sprite].collides_with(sprites[first_border_sprite + 2])) {
-						sprites[player_sprite].translate(0, +player_speed);
-					}
-				}
-				else if (lastDirection == "down") {
-					sprites[player_sprite].translate(0, +player_speed * 15);
-					if (sprites[player_sprite].collides_with(sprites[first_border_sprite + 3])) {
-						sprites[player_sprite].translate(0, -player_speed);
-					}
-				}
-
-			}
-		}
 
 		// use the keyboard to move the player
 		void move_player() {
-			const float player_speed = 0.05f;
+			const float player_speed = 0.1f;
 			// left and right arrows
 			if (is_key_down(key_up)) {
 				lastDirection = "up";
@@ -144,27 +122,43 @@ namespace octet {
 				--bombs_disabled;
 			}
 			else {
+
 				// find an invaderer
 				sprite &castle = sprites[castle_sprite];
 				sprite &player = sprites[player_sprite];
+				std::vector<sprite>available_enemys = {};
 
-				for (int j = randomizer.get(0, num_enemys); j < num_enemys; ++j) {
-					sprite &enemy = sprites[first_enemy_sprite + j];
-					if (enemy.is_enabled() && enemy.is_adjacent(castle, 0.3f) && enemy.is_onscreen()) {
-						// find a bomb
-						for (int i = 0; i != num_bombs; ++i) {
-							if (!sprites[first_bomb_sprite + i].is_enabled()) {
-								sprites[first_bomb_sprite + i].direction = "left";
-								sprites[first_bomb_sprite + i].set_relative(enemy, -0.25f, 0);
-								sprites[first_bomb_sprite + i].is_enabled() = true;
-								bombs_disabled = 15;
-								ALuint source = get_sound_source();
-								alSourcei(source, AL_BUFFER, whoosh);
-								alSourcePlay(source);
-								return;
-							}
+				//get all potential enemys that could fire
+				for (int i = 0; i < num_enemys; i++) {
+					sprite &enemy = sprites[first_enemy_sprite + i];
+					if (enemy.is_onscreen() && enemy.is_enabled()) {
+						available_enemys.push_back(enemy);
+					}
+				}
+
+				//enemy.is_adjacent(castle, 0.3f)
+
+				if (available_enemys.size() > 0) {
+					std::vector<sprite>::iterator available_enemys_iterator = available_enemys.begin();
+
+					//loop through the available bombs
+					for (int i = 0; i != num_bombs; ++i) {
+
+						int j = randomizer.get(0, available_enemys.size());
+
+						sprite &enemy = available_enemys_iterator[j];
+
+						if (!sprites[first_bomb_sprite + i].is_enabled()) {
+
+							sprites[first_bomb_sprite + i].direction = "left";
+							sprites[first_bomb_sprite + i].set_relative(enemy, -0.25f, 0);
+							sprites[first_bomb_sprite + i].is_enabled() = true;
+
+							ALuint source = get_sound_source();
+							alSourcei(source, AL_BUFFER, whoosh);
+							alSourcePlay(source);
+							return;
 						}
-						return;
 					}
 				}
 			}
@@ -442,8 +436,6 @@ namespace octet {
 			if (game_over) {
 				return;
 			}
-
-			dodge();
 
 			move_player();
 
