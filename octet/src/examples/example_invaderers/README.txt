@@ -25,3 +25,5 @@ patch notes:
 23. player movement speed increased. Removed the dodge functionality as it is now defunct.
 24. enemy pathing solved.
 25. changed player graphic to a medieval shield
+26. Overloaded sprite::render() function to pass a "checker_shader" if sprite::is_border == true;
+27. modified checker_shader's fragment shader to create a checker pattern.

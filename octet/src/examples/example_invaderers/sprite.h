@@ -20,6 +20,7 @@ namespace octet {
 
 	public:
 		
+		bool is_border = false;
 		string direction = "left";
 
 		sprite() {
@@ -52,14 +53,38 @@ namespace octet {
 			//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 			//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			shader.render(modelToProjection, 0);
+			render_part2();
+		}
+
+		void render(checker_shader &shader, mat4t &cameraToWorld) {
+			// invisible sprite... used for gameplay.
+			if (!texture) return;
+
+			// build a projection matrix: model -> world -> camera -> projection
+			// the projection space is the cube -1 <= x/w, y/w, z/w <= 1
+			mat4t modelToProjection = mat4t::build_projection_matrix(modelToWorld, cameraToWorld);
+
+			// set up opengl to draw textured triangles using sampler 0 (GL_TEXTURE0)
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texture);
+
+			// use "old skool" rendering
+			//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+			//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			shader.render(modelToProjection, 0);
+
+			render_part2();
+		}
+
+		void render_part2() {
 
 			// this is an array of the positions of the corners of the sprite in 3D
 			// a straight "float" here means this array is being generated here at runtime.
 			float vertices[] = {
-			  -halfWidth, -halfHeight, 0,
-			   halfWidth, -halfHeight, 0,
-			   halfWidth,  halfHeight, 0,
-			  -halfWidth,  halfHeight, 0,
+				-halfWidth, -halfHeight, 0,
+				halfWidth, -halfHeight, 0,
+				halfWidth,  halfHeight, 0,
+				-halfWidth,  halfHeight, 0,
 			};
 
 			// attribute_pos (=0) is position of each corner
@@ -70,10 +95,10 @@ namespace octet {
 
 			// this is an array of the positions of the corners of the texture in 2D
 			static const float uvs[] = {
-			   0,  0,
-			   1,  0,
-			   1,  1,
-			   0,  1,
+				0,  0,
+				1,  0,
+				1,  1,
+				0,  1,
 			};
 
 			// attribute_uv is position in the texture of each corner

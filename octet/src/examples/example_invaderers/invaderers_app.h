@@ -10,6 +10,7 @@ namespace octet {
 		mat4t cameraToWorld;
 		texture_shader texture_shader_;
 		alternative_shader alternative_shader_;
+		checker_shader checker_shader_;
 
 		enum {
 			num_sound_sources = 8,
@@ -357,6 +358,7 @@ namespace octet {
 			// set up the shader
 			texture_shader_.init();
 			alternative_shader_.init();
+			checker_shader_.init();
 
 			// set up the matrices with a camera 5 units from the origin
 			cameraToWorld.loadIdentity();
@@ -382,6 +384,11 @@ namespace octet {
 			sprites[first_border_sprite + 1].init(white, 0, 3, 6, 3);
 			sprites[first_border_sprite + 2].init(white, -3, 0, 0.2f, 6);
 			sprites[first_border_sprite + 3].init(white, 3, 0, 0.2f, 6);
+
+			sprites[first_border_sprite + 0].is_border = true;
+			sprites[first_border_sprite + 1].is_border = true;
+			sprites[first_border_sprite + 2].is_border = true;
+			sprites[first_border_sprite + 3].is_border = true;
 
 			// use the missile texture
 			GLuint missile = resource_dict::get_texture_handle(GL_RGBA, textures_it[5]);
@@ -457,7 +464,13 @@ namespace octet {
 
 			// draw all the sprites
 			for (int i = 0; i != num_sprites; ++i) {
-				sprites[i].render(texture_shader_, cameraToWorld);
+				if (sprites[i].is_border) {
+					sprites[i].render(checker_shader_, cameraToWorld);
+				}
+				else {
+					sprites[i].render(texture_shader_, cameraToWorld);
+				}
+				
 			}
 
 			char score_text[32];

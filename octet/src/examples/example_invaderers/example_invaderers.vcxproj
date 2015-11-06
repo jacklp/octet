@@ -86,6 +86,8 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\shaders\alternative_shader.h" />
+    <ClInclude Include="..\..\shaders\checker_shader.h" />
     <ClInclude Include="..\..\shaders\shader.h" />
     <ClInclude Include="..\..\shaders\shaders.h" />
     <ClInclude Include="..\..\shaders\texture_shader.h" />
