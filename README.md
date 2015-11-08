@@ -1,22 +1,21 @@
-/*********************************************************/
 //						Medieval Pong					 //
-/*********************************************************/
 
 
 
-Youtube Link:
+
+//Youtube Link//
 https://www.youtube.com/watch?v=FqZitkiHglE
 
 
 
-Controls:
+//Controls//
 
 W - Moves player up along the Y-axis.
 S - Moves player down along the Y-axis.
 
 
 
-Game Objective:
+//Game Objective//
 
 - You are a shield.
 - Defend your castle by reflecting arrows back on to the attackers.
@@ -24,7 +23,7 @@ Game Objective:
 
 
 
-Shaders:
+//Shaders//
 
 texture_shader.h:
 - The fragment shader takes the output of the texture2D function (vec4) and reverses the rgb components of the pixel to invert the colour.
@@ -39,9 +38,8 @@ it is in and returns either black or white to give us a checkerboard pattern.
 
 
 
-Overloading: 
+//Overloading// 
 
-Diagram - 
 ![Overloading diagram](http://i.imgur.com/aE5JLSV.jpg)
 
 sprite.h has 2 render methods:
@@ -54,7 +52,7 @@ sprite.h has 2 render methods:
 
 
 
-tinyxml - Third Party Library:
+//tinyxml - Third Party Library//
 
 I implemented a utilities library to do 2 things:
 - invaderers_app::load_xml tinyxml() reads the document file in to memory.
@@ -62,20 +60,20 @@ I implemented a utilities library to do 2 things:
 
 
 
-Iterators:
+//Iterators//
 
 - The sound and texture vectors in invaderers_app::app_init() are assigned iterators after they have been filled with data from config.xml.
 - The iterators are later used to point to the relevant index to retrieve the string of the file paths for the assets of the application.
 
 
 
-Reworked key mappings:
+//Reworked key mappings//
 
 - in windows_specific::translate() I replaced the existing Windows arrow key references (e.g VK_LEFT) with the ASCII values of WASD (e.g 65)
 
 
 
-Gameplay
+//Gameplay//
 
 - Changed the player controls to move along the vertical axis.
 - Flipped the game effectively horizontally.
@@ -86,14 +84,14 @@ Gameplay
 
 
 
-Assets - Sounds and Images:
+//Assets - Sounds and Images//
 
 - The shield gif was created in adobe illustrator, the rest were stock images found online and modified in photoshop.
 - The sound wav was found online and implemented.
 
 
 
-Sequential Full Patch Notes
+//Sequential Full Patch Notes//
 
 1. Load in a config via XML using the TinyXML parser library.
 2. Create an iterator for our vector<string> textures and use this to plug in the correct attributes to application (this could be made more dynamic).
