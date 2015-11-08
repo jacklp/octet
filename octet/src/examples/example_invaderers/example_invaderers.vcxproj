@@ -95,7 +95,7 @@
     <ClInclude Include="sprite.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="README.txt" />
+    <Text Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="xml\config.xml" />

@@ -13,9 +13,9 @@
     <ClInclude Include="..\..\shaders\checker_shader.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="README.txt" />
+    <Xml Include="xml\config.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="xml\config.xml" />
+    <Text Include="README.md" />
   </ItemGroup>
 </Project>

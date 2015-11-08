@@ -28,6 +28,7 @@ namespace octet {
 				attribute vec4 pos;
 				attribute vec2 uv;
 
+
 				uniform mat4 modelToProjection;
 
 				void main() { gl_Position = modelToProjection * pos; uv_ = uv; }
